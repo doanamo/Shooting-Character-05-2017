@@ -14,9 +14,11 @@ public:
 	ACharacterBase();
 
 protected:
-	virtual void BeginPlay() override;
-
-public:	
-	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	void MoveVertical(float Value);
+	void MoveHorizontal(float Value);
 };
