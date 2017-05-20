@@ -10,10 +10,9 @@ class GAME_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	ACharacterBase();
 
-protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void BeginPlay() override;
