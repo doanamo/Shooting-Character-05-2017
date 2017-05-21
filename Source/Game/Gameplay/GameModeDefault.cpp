@@ -9,4 +9,5 @@ AGameModeDefault::AGameModeDefault()
 
 void AGameModeDefault::BeginPlay()
 {
+	Super::BeginPlay();
 }

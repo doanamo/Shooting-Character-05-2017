@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (c) 2017 Piotr Doan. All Rights Reserved.
 
 using UnrealBuildTool;
 using System.Collections.Generic;
@@ -10,16 +10,12 @@ public class GameTarget : TargetRules
 		Type = TargetType.Game;
 	}
 
-	//
-	// TargetRules interface.
-	//
-
 	public override void SetupBinaries(
 		TargetInfo Target,
 		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
 		ref List<string> OutExtraModuleNames
-		)
+	)
 	{
-		OutExtraModuleNames.AddRange( new string[] { "Game" } );
+		OutExtraModuleNames.AddRange(new string[] { "Game" });
 	}
 }
