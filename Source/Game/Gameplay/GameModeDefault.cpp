@@ -2,3 +2,11 @@
 
 #include "Game.h"
 #include "GameModeDefault.h"
+
+AGameModeDefault::AGameModeDefault()
+{
+}
+
+void AGameModeDefault::BeginPlay()
+{
+}

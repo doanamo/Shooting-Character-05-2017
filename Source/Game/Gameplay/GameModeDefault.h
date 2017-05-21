@@ -9,4 +9,9 @@ UCLASS()
 class GAME_API AGameModeDefault : public AGameModeBase
 {
 	GENERATED_BODY()
+
+protected:
+	AGameModeDefault();
+	
+	virtual void BeginPlay() override;
 };
