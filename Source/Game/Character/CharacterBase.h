@@ -18,6 +18,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	void AimPressed();
+	void AimReleased();
+
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
 };

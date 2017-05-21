@@ -20,6 +20,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Setup character input bindings.
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::AimPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::AimReleased);
+
 	PlayerInputComponent->BindAxis("MoveVertical", this, &ACharacterBase::MoveVertical);
 	PlayerInputComponent->BindAxis("MoveHorizontal", this, &ACharacterBase::MoveHorizontal);
 }
@@ -32,6 +35,16 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACharacterBase::AimPressed()
+{
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void ACharacterBase::AimReleased()
+{
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ACharacterBase::MoveVertical(float Value)
