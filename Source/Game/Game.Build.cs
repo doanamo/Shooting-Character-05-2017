@@ -4,7 +4,7 @@ using UnrealBuildTool;
 
 public class Game : ModuleRules
 {
-	public Game(TargetInfo Target)
+	public Game(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PrivateIncludePaths.AddRange(new string[]
 		{

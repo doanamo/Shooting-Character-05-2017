@@ -5,17 +5,9 @@ using System.Collections.Generic;
 
 public class GameTarget : TargetRules
 {
-	public GameTarget(TargetInfo Target)
+	public GameTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-	}
-
-	public override void SetupBinaries(
-		TargetInfo Target,
-		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-		ref List<string> OutExtraModuleNames
-	)
-	{
-		OutExtraModuleNames.AddRange(new string[] { "Game" });
+		ExtraModuleNames.Add("Game");
 	}
 }
