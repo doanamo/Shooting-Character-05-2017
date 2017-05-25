@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "GameFramework/PlayerController.h"
+#include <GameFramework/PlayerController.h>
 #include "PlayerControllerDefault.generated.h"
 
 UCLASS()

@@ -7,7 +7,7 @@ UCharacterBaseAnimation::UCharacterBaseAnimation() :
 	bIsAiming(false),
 	bIsMoving(false),
 	MovementSpeed(0.0f),
-	StrafingDirection(0.0f),
+	StrafingRotation(0.0f),
 	OwningPawn(nullptr)
 {
 }

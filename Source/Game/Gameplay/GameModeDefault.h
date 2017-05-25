@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "GameFramework/GameModeBase.h"
+#include <GameFramework/GameModeBase.h>
 #include "GameModeDefault.generated.h"
 
 UCLASS()

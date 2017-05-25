@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "GameFramework/Character.h"
+#include <GameFramework/Character.h>
 #include "CharacterBase.generated.h"
 
 UCLASS()

@@ -55,6 +55,21 @@ void ACharacterBase::Tick(float DeltaTime)
 	float Velocity = GetVelocity().Size();
 	AnimInstance->bIsMoving = Velocity > 1.0f;
 	AnimInstance->MovementSpeed = Velocity;
+
+	// Calculate strafing rotation.
+	FVector MovementDirection = GetLastMovementInputVector();
+	FVector CharacterDirection = GetActorForwardVector();
+
+	float StrafingRotation = FMath::Atan2(MovementDirection.Y, MovementDirection.X) - FMath::Atan2(CharacterDirection.Y, CharacterDirection.X);
+
+	if(FMath::Abs(StrafingRotation) > PI)
+	{
+		StrafingRotation = StrafingRotation > 0 ? StrafingRotation - PI * 2.0f : StrafingRotation + PI * 2.0f;
+	}
+
+	StrafingRotation = FMath::RadiansToDegrees(StrafingRotation);
+
+	AnimInstance->StrafingRotation = StrafingRotation;
 }
 
 void ACharacterBase::AimPressed()

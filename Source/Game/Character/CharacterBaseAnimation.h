@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Animation/AnimInstance.h"
+#include <Animation/AnimInstance.h>
 #include "CharacterBaseAnimation.generated.h"
 
 UCLASS()
@@ -21,7 +21,7 @@ public:
 	float MovementSpeed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float StrafingDirection;
+	float StrafingRotation;
 
 protected:
 	UCharacterBaseAnimation();
