@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "CharacterBase.h"
 #include "CharacterBaseAnimation.h"
+#include "PlayerControllerDefault.h"
 
 ACharacterBase::ACharacterBase() :
 	AnimInstance(nullptr)
@@ -21,11 +22,11 @@ void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	// Retrieve skeletal mesh.
+	// Retrieve the skeletal mesh.
 	USkeletalMeshComponent* SkeletalMesh = GetMesh();
 	check(SkeletalMesh != nullptr && "Character does not have a skeletal mesh!");
 
-	// Retrieve animation instance.
+	// Retrieve the animation instance.
 	AnimInstance = Cast<UCharacterBaseAnimation>(SkeletalMesh->GetAnimInstance());
 	check(AnimInstance != nullptr && "Character does not have an animation instance!");
 }
@@ -70,6 +71,29 @@ void ACharacterBase::Tick(float DeltaTime)
 	StrafingRotation = FMath::RadiansToDegrees(StrafingRotation);
 
 	AnimInstance->StrafingRotation = StrafingRotation;
+
+	// Rotate the character toward the aiming point.
+	if(AnimInstance->bIsAiming)
+	{
+		auto PlayerController = Cast<APlayerControllerDefault>(GetController());
+
+		if(PlayerController)
+		{
+			FVector MousePosition;
+			FVector MouseDirection;
+
+			if(PlayerController->DeprojectMousePositionToWorld(MousePosition, MouseDirection))
+			{
+				FVector LookLocation = FMath::LinePlaneIntersection(MousePosition, MousePosition + MouseDirection * 10000.0f, FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 1.0f));
+
+				FRotator LookRotation = (LookLocation - GetActorLocation()).Rotation();
+				LookRotation.Pitch = 0.0f;
+				LookRotation.Roll = 0.0f;
+
+				SetActorRotation(FMath::Lerp(GetActorRotation(), LookRotation, 0.05f));
+			}
+		}
+	}
 }
 
 void ACharacterBase::AimPressed()
