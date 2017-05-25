@@ -2,17 +2,32 @@
 
 #include "Game.h"
 #include "CharacterBase.h"
+#include "CharacterBaseAnimation.h"
 
-ACharacterBase::ACharacterBase()
+ACharacterBase::ACharacterBase() :
+	AnimInstance(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Don't update the controller's rotation yaw.
+	// Do not update the controller's rotation yaw.
 	// Has to be disabled for "Orient Rotation to Movement" to work.
 	bUseControllerRotationYaw = false;
 
 	// Rotate the character during movement.
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
+void ACharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// Retrieve skeletal mesh.
+	USkeletalMeshComponent* SkeletalMesh = GetMesh();
+	check(SkeletalMesh != nullptr && "Character does not have a skeletal mesh!");
+
+	// Retrieve animation instance.
+	AnimInstance = Cast<UCharacterBaseAnimation>(SkeletalMesh->GetAnimInstance());
+	check(AnimInstance != nullptr && "Character does not have an animation instance!");
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -35,16 +50,23 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Set animation movement parameters.
+	float Velocity = GetVelocity().Size();
+	AnimInstance->bIsMoving = Velocity > 1.0f;
+	AnimInstance->MovementSpeed = Velocity;
 }
 
 void ACharacterBase::AimPressed()
 {
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	AnimInstance->bIsAiming = true;
 }
 
 void ACharacterBase::AimReleased()
 {
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	AnimInstance->bIsAiming = false;
 }
 
 void ACharacterBase::MoveVertical(float Value)

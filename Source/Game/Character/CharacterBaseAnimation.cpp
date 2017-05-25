@@ -4,7 +4,11 @@
 #include "CharacterBaseAnimation.h"
 
 UCharacterBaseAnimation::UCharacterBaseAnimation() :
-	bIsMoving(false)
+	bIsAiming(false),
+	bIsMoving(false),
+	MovementSpeed(0.0f),
+	StrafingDirection(0.0f),
+	OwningPawn(nullptr)
 {
 }
 
@@ -18,12 +22,4 @@ void UCharacterBaseAnimation::NativeInitializeAnimation()
 void UCharacterBaseAnimation::NativeUpdateAnimation(float DeltaTime)
 {
 	Super::NativeUpdateAnimation(DeltaTime);
-
-	if(OwningPawn)
-	{
-		float Velocity = OwningPawn->GetVelocity().Size();
-
-		bIsMoving = Velocity > 1.0f;
-		MovementSpeed = Velocity;
-	}
 }

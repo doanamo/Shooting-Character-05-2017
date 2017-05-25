@@ -15,6 +15,7 @@ protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
@@ -23,4 +24,7 @@ protected:
 
 	void MoveVertical(float Value);
 	void MoveHorizontal(float Value);
+
+private:
+	class UCharacterBaseAnimation* AnimInstance;
 };

@@ -12,10 +12,16 @@ class GAME_API UCharacterBaseAnimation : public UAnimInstance
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsAiming;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsMoving;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float MovementSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float StrafingDirection;
 
 protected:
 	UCharacterBaseAnimation();
