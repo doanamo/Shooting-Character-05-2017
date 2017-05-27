@@ -43,6 +43,7 @@ protected:
 private:
 	class UCharacterBaseAnimation* AnimationInstance;
 
+	bool bIsAiming;
 	bool bIsFiring;
 	float FireDelay;
 	float FireTimer;

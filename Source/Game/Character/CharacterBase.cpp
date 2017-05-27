@@ -14,7 +14,8 @@ ACharacterBase::ACharacterBase() :
 	MaxWalkSpeed = 140.0f;
 	MaxJogSpeed = 280.0f;
 
-	// Character firing values.
+	// Character weapon handling values.
+	bIsAiming = false;
 	bIsFiring = false;
 	FireDelay = 0.2f;
 	FireTimer = 0.0f;
@@ -67,23 +68,44 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Calculate strafing rotation.
-	FVector MovementDirection = GetLastMovementInputVector();
-	FVector CharacterDirection = GetActorForwardVector();
+	// Handle weapon firing.
+	FireTimer = FMath::Max(0.0f, FireTimer - DeltaTime);
 
-	float StrafingRotation = FMath::Atan2(MovementDirection.Y, MovementDirection.X) - FMath::Atan2(CharacterDirection.Y, CharacterDirection.X);
-
-	if(FMath::Abs(StrafingRotation) > PI)
+	if(bIsFiring && FireTimer == 0.0f)
 	{
-		StrafingRotation = StrafingRotation > 0 ? StrafingRotation - PI * 2.0f : StrafingRotation + PI * 2.0f;
+		if(bIsAiming)
+		{
+			AnimationInstance->Montage_Play(FireAimAnimation);
+		}
+		else
+		{
+			AnimationInstance->Montage_Play(FireHipAnimation);
+		}
+
+		FireTimer = FireDelay;
 	}
 
-	StrafingRotation = FMath::RadiansToDegrees(StrafingRotation);
+	// Handle movement orientation and speed.
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
 
-	AnimationInstance->StrafingRotation = StrafingRotation;
+	if(bIsAiming || bIsFiring)
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 
-	// Rotate the character toward the aiming point.
-	if(AnimationInstance->bIsAiming)
+		if(bIsAiming)
+		{
+			GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+		}
+
+		if(bIsFiring)
+		{
+			GetCharacterMovement()->MaxWalkSpeed *= 0.8;
+		}
+	}
+
+	// Rotate the character towards the aiming point.
+	if(bIsAiming || bIsFiring)
 	{
 		auto PlayerController = Cast<APlayerControllerDefault>(GetController());
 
@@ -111,6 +133,9 @@ void ACharacterBase::Tick(float DeltaTime)
 		}
 	}
 
+	// Set animation weapon parameters.
+	AnimationInstance->bIsAiming = bIsAiming;
+
 	// Set animation movement parameters.
 	bool bIsMoving = GetCharacterMovement()->IsMovingOnGround();
 	float CurrentSpeed = GetVelocity().Size();
@@ -118,21 +143,22 @@ void ACharacterBase::Tick(float DeltaTime)
 	AnimationInstance->bIsMoving = bIsMoving;
 	AnimationInstance->MovementSpeed = bIsMoving ? CurrentSpeed : 0.0f;
 
-	// Handle weapon firing.
-	FireTimer = FMath::Max(0.0f, FireTimer - DeltaTime);
+	// Set animation strafing rotation paremeter.
+	FVector MovementDirection = GetLastMovementInputVector();
+	FVector CharacterDirection = GetActorForwardVector();
 
-	if(bIsFiring && FireTimer == 0.0f)
+	if(!MovementDirection.IsNearlyZero())
 	{
-		if(AnimationInstance->bIsAiming)
+		float StrafingRotation = FMath::Atan2(MovementDirection.Y, MovementDirection.X) - FMath::Atan2(CharacterDirection.Y, CharacterDirection.X);
+
+		if(FMath::Abs(StrafingRotation) > PI)
 		{
-			AnimationInstance->Montage_Play(FireAimAnimation);
-		}
-		else
-		{
-			AnimationInstance->Montage_Play(FireHipAnimation);
+			StrafingRotation = StrafingRotation > 0 ? StrafingRotation - PI * 2.0f : StrafingRotation + PI * 2.0f;
 		}
 
-		FireTimer = FireDelay;
+		StrafingRotation = FMath::RadiansToDegrees(StrafingRotation);
+
+		AnimationInstance->StrafingRotation = StrafingRotation;
 	}
 }
 
@@ -148,18 +174,12 @@ void ACharacterBase::FireReleased()
 
 void ACharacterBase::AimPressed()
 {
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
-
-	AnimationInstance->bIsAiming = true;
+	bIsAiming = true;
 }
 
 void ACharacterBase::AimReleased()
 {
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
-
-	AnimationInstance->bIsAiming = false;
+	bIsAiming = false;
 }
 
 void ACharacterBase::MoveVertical(float Value)
