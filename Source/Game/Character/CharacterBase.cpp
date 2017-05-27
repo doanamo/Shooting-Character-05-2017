@@ -86,12 +86,18 @@ void ACharacterBase::Tick(float DeltaTime)
 
 		if(PlayerController)
 		{
-			FVector MousePosition;
+			FVector MouseLocation;
 			FVector MouseDirection;
 
-			if(PlayerController->DeprojectMousePositionToWorld(MousePosition, MouseDirection))
+			if(PlayerController->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
 			{
-				FVector LookLocation = FMath::LinePlaneIntersection(MousePosition, MousePosition + MouseDirection * 10000.0f, FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 1.0f));
+				FVector LineBegin = MouseLocation;
+				FVector LineEnd = MouseLocation + MouseDirection * 10000.0f;
+
+				FVector PlaneOrigin = GetActorLocation();
+				FVector PlaneNormal = FVector(0.0f, 0.0f, 1.0f);
+
+				FVector LookLocation = FMath::LinePlaneIntersection(LineBegin, LineEnd, PlaneOrigin, PlaneNormal);
 
 				FRotator LookRotation = (LookLocation - GetActorLocation()).Rotation();
 				LookRotation.Pitch = 0.0f;
