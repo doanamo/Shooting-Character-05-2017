@@ -6,9 +6,16 @@
 #include "PlayerControllerDefault.h"
 
 ACharacterBase::ACharacterBase() :
-	AnimInstance(nullptr)
+	AnimationInstance(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Character movement speed values.
+	MaxWalkSpeed = 160.0f;
+	MaxJogSpeed = 280.0f;
+
+	// Set default movement speed.
+	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
 
 	// Do not update the controller's rotation yaw.
 	// Has to be disabled for "Orient Rotation to Movement" to work.
@@ -27,8 +34,8 @@ void ACharacterBase::PostInitializeComponents()
 	check(SkeletalMesh != nullptr && "Character does not have a skeletal mesh!");
 
 	// Retrieve the animation instance.
-	AnimInstance = Cast<UCharacterBaseAnimation>(SkeletalMesh->GetAnimInstance());
-	check(AnimInstance != nullptr && "Character does not have an animation instance!");
+	AnimationInstance = Cast<UCharacterBaseAnimation>(SkeletalMesh->GetAnimInstance());
+	check(AnimationInstance != nullptr && "Character does not have an animation instance!");
 }
 
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -54,8 +61,8 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	// Set animation movement parameters.
 	float Velocity = GetVelocity().Size();
-	AnimInstance->bIsMoving = Velocity > 1.0f;
-	AnimInstance->MovementSpeed = Velocity;
+	AnimationInstance->bIsMoving = Velocity > 1.0f;
+	AnimationInstance->MovementSpeed = Velocity;
 
 	// Calculate strafing rotation.
 	FVector MovementDirection = GetLastMovementInputVector();
@@ -70,10 +77,10 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	StrafingRotation = FMath::RadiansToDegrees(StrafingRotation);
 
-	AnimInstance->StrafingRotation = StrafingRotation;
+	AnimationInstance->StrafingRotation = StrafingRotation;
 
 	// Rotate the character toward the aiming point.
-	if(AnimInstance->bIsAiming)
+	if(AnimationInstance->bIsAiming)
 	{
 		auto PlayerController = Cast<APlayerControllerDefault>(GetController());
 
@@ -99,13 +106,17 @@ void ACharacterBase::Tick(float DeltaTime)
 void ACharacterBase::AimPressed()
 {
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	AnimInstance->bIsAiming = true;
+	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+
+	AnimationInstance->bIsAiming = true;
 }
 
 void ACharacterBase::AimReleased()
 {
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	AnimInstance->bIsAiming = false;
+	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
+
+	AnimationInstance->bIsAiming = false;
 }
 
 void ACharacterBase::MoveVertical(float Value)

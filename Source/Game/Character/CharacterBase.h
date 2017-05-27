@@ -10,6 +10,13 @@ class GAME_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditDefaultsOnly)
+	float MaxWalkSpeed;
+
+	UPROPERTY(EditDefaultsOnly)
+	float MaxJogSpeed;
+
 protected:
 	ACharacterBase();
 
@@ -26,5 +33,5 @@ protected:
 	void MoveHorizontal(float Value);
 
 private:
-	class UCharacterBaseAnimation* AnimInstance;
+	class UCharacterBaseAnimation* AnimationInstance;
 };
