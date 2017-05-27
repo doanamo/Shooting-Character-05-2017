@@ -17,6 +17,12 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxJogSpeed;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* FireHipAnimation;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* FireAimAnimation;
+
 protected:
 	ACharacterBase();
 
@@ -26,6 +32,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	void FirePressed();
+	void FireReleased();
 	void AimPressed();
 	void AimReleased();
 
@@ -34,4 +42,8 @@ protected:
 
 private:
 	class UCharacterBaseAnimation* AnimationInstance;
+
+	bool bIsFiring;
+	float FireDelay;
+	float FireTimer;
 };

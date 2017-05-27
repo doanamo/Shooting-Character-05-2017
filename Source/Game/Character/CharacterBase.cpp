@@ -14,6 +14,11 @@ ACharacterBase::ACharacterBase() :
 	MaxWalkSpeed = 140.0f;
 	MaxJogSpeed = 280.0f;
 
+	// Character firing values.
+	bIsFiring = false;
+	FireDelay = 0.2f;
+	FireTimer = 0.0f;
+
 	// Set default movement speed.
 	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
 
@@ -43,6 +48,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Setup character input bindings.
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::FirePressed);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::FireReleased);
+
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::AimPressed);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::AimReleased);
 
@@ -109,6 +117,33 @@ void ACharacterBase::Tick(float DeltaTime)
 
 	AnimationInstance->bIsMoving = bIsMoving;
 	AnimationInstance->MovementSpeed = bIsMoving ? CurrentSpeed : 0.0f;
+
+	// Handle weapon firing.
+	FireTimer = FMath::Max(0.0f, FireTimer - DeltaTime);
+
+	if(bIsFiring && FireTimer == 0.0f)
+	{
+		if(AnimationInstance->bIsAiming)
+		{
+			AnimationInstance->Montage_Play(FireAimAnimation);
+		}
+		else
+		{
+			AnimationInstance->Montage_Play(FireHipAnimation);
+		}
+
+		FireTimer = FireDelay;
+	}
+}
+
+void ACharacterBase::FirePressed()
+{
+	bIsFiring = true;
+}
+
+void ACharacterBase::FireReleased()
+{
+	bIsFiring = false;
 }
 
 void ACharacterBase::AimPressed()
