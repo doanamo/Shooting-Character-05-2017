@@ -59,11 +59,6 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Set animation movement parameters.
-	float Velocity = GetVelocity().Size();
-	AnimationInstance->bIsMoving = Velocity > 1.0f;
-	AnimationInstance->MovementSpeed = Velocity;
-
 	// Calculate strafing rotation.
 	FVector MovementDirection = GetLastMovementInputVector();
 	FVector CharacterDirection = GetActorForwardVector();
@@ -107,6 +102,13 @@ void ACharacterBase::Tick(float DeltaTime)
 			}
 		}
 	}
+
+	// Set animation movement parameters.
+	bool bIsMoving = GetCharacterMovement()->IsMovingOnGround();
+	float CurrentSpeed = GetVelocity().Size();
+
+	AnimationInstance->bIsMoving = bIsMoving;
+	AnimationInstance->MovementSpeed = bIsMoving ? CurrentSpeed : 0.0f;
 }
 
 void ACharacterBase::AimPressed()
