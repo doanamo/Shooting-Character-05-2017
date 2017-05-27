@@ -11,7 +11,7 @@ ACharacterBase::ACharacterBase() :
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Character movement speed values.
-	MaxWalkSpeed = 160.0f;
+	MaxWalkSpeed = 140.0f;
 	MaxJogSpeed = 280.0f;
 
 	// Set default movement speed.
