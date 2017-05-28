@@ -44,21 +44,6 @@ void ACharacterBase::PostInitializeComponents()
 	check(AnimationInstance != nullptr && "Character does not have an animation instance!");
 }
 
-void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	// Setup character input bindings.
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::FirePressed);
-	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::FireReleased);
-
-	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &ACharacterBase::AimPressed);
-	PlayerInputComponent->BindAction("Aim", IE_Released, this, &ACharacterBase::AimReleased);
-
-	PlayerInputComponent->BindAxis("MoveVertical", this, &ACharacterBase::MoveVertical);
-	PlayerInputComponent->BindAxis("MoveHorizontal", this, &ACharacterBase::MoveHorizontal);
-}
-
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -162,32 +147,17 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 }
 
-void ACharacterBase::FirePressed()
+void ACharacterBase::Move(FVector Direction, float Scale)
 {
-	bIsFiring = true;
+	AddMovementInput(Direction, Scale);
 }
 
-void ACharacterBase::FireReleased()
+void ACharacterBase::Fire(bool Toggle)
 {
-	bIsFiring = false;
+	bIsFiring = Toggle;
 }
 
-void ACharacterBase::AimPressed()
+void ACharacterBase::Aim(bool Toggle)
 {
-	bIsAiming = true;
-}
-
-void ACharacterBase::AimReleased()
-{
-	bIsAiming = false;
-}
-
-void ACharacterBase::MoveVertical(float Value)
-{
-	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
-}
-
-void ACharacterBase::MoveHorizontal(float Value)
-{
-	AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
+	bIsAiming = Toggle;
 }

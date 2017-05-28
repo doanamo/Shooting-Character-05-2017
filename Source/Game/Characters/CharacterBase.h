@@ -23,22 +23,17 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FireAimAnimation;
 
+public:
+	void Move(FVector Direction, float Scale);
+	void Fire(bool Toggle);
+	void Aim(bool Toggle);
+
 protected:
 	ACharacterBase();
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
-	void FirePressed();
-	void FireReleased();
-	void AimPressed();
-	void AimReleased();
-
-	void MoveVertical(float Value);
-	void MoveHorizontal(float Value);
 
 private:
 	class UCharacterBaseAnimation* AnimationInstance;

@@ -13,5 +13,21 @@ class GAME_API APlayerControllerDefault : public APlayerController
 protected:
 	APlayerControllerDefault();
 
+	virtual void SetupInputComponent() override;
+	virtual void AcknowledgePossession(APawn* Pawn) override;
 	virtual void BeginPlay() override;
+	
+private:
+	void MoveVertical(float Scale);
+	void MoveHorizontal(float Scale);
+
+	void FirePressed();
+	void FireReleased();
+	void AimPressed();
+	void AimReleased();
+
+	void PickUpPressed();
+
+private:
+	class ACharacterBase* Character;
 };
