@@ -121,6 +121,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	// Set animation weapon parameters.
+	AnimationInstance->bHasWeapon = CurrentWeapon != nullptr;
 	AnimationInstance->bIsAiming = bIsAiming;
 
 	// Set animation movement parameters.

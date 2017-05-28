@@ -12,6 +12,9 @@ class GAME_API UCharacterBaseAnimation : public UAnimInstance
 
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bHasWeapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsAiming;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

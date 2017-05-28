@@ -4,6 +4,7 @@
 #include "CharacterBaseAnimation.h"
 
 UCharacterBaseAnimation::UCharacterBaseAnimation() :
+	bHasWeapon(false),
 	bIsAiming(false),
 	bIsMoving(false),
 	MovementSpeed(0.0f),
