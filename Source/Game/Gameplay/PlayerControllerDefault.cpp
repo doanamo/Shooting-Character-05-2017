@@ -2,7 +2,7 @@
 
 #include "Game.h"
 #include "PlayerControllerDefault.h"
-#include <Characters/CharacterBase.h>
+#include "Characters/CharacterBase.h"
 
 APlayerControllerDefault::APlayerControllerDefault()
 {
@@ -40,53 +40,60 @@ void APlayerControllerDefault::BeginPlay()
 
 void APlayerControllerDefault::MoveVertical(float Scale)
 {
-	if(Character)
-	{
-		Character->Move(FVector(1.0f, 0.0f, 0.0f), Scale);
-	}
+	if(!Character)
+		return;
+
+	Character->Move(FVector(1.0f, 0.0f, 0.0f), Scale);
 }
 
 void APlayerControllerDefault::MoveHorizontal(float Scale)
 {
-	if(Character)
-	{
-		Character->Move(FVector(0.0f, 1.0f, 0.0f), Scale);
-	}
+	if(!Character)
+		return;
+	
+	Character->Move(FVector(0.0f, 1.0f, 0.0f), Scale);
 }
 
 void APlayerControllerDefault::FirePressed()
 {
-	if(Character)
-	{
-		Character->Fire(true);
-	}
+	if(!Character)
+		return;
+
+	Character->Fire(true);
 }
 
 void APlayerControllerDefault::FireReleased()
 {
-	if(Character)
-	{
-		Character->Fire(false);
-	}
+	if(!Character)
+		return;
+
+	Character->Fire(false);
 }
 
 void APlayerControllerDefault::AimPressed()
 {
-	if(Character)
-	{
-		Character->Aim(true);
-	}
+	if(!Character)
+		return;
+	
+	Character->Aim(true);
 }
 
 void APlayerControllerDefault::AimReleased()
 {
-	if(Character)
-	{
-		Character->Aim(false);
-	}
+	if(!Character)
+		return;
+
+	Character->Aim(false);
 }
 
 void APlayerControllerDefault::PickUpPressed()
 {
-	// TODO
+	if(!Character)
+		return;
+
+	FHitResult TraceResult;
+	if(GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, false, TraceResult))
+	{
+		Character->PickUp(TraceResult.GetActor());
+	}
 }

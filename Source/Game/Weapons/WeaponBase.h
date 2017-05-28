@@ -11,12 +11,16 @@ class GAME_API AWeaponBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-	AWeaponBase();
+	void Attach(class USkeletalMeshComponent* Mesh);
+	void Detach();
 
 protected:
-	virtual void BeginPlay() override;
+	AWeaponBase();
 
-public:	
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+private:
+	class UPrimitiveComponent* Primitive;
 };

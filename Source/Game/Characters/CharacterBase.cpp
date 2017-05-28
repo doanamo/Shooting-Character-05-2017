@@ -3,7 +3,9 @@
 #include "Game.h"
 #include "CharacterBase.h"
 #include "CharacterBaseAnimation.h"
-#include "PlayerControllerDefault.h"
+#include "Weapons/WeaponBase.h"
+
+#include <GameFramework/PlayerController.h>
 
 ACharacterBase::ACharacterBase() :
 	AnimationInstance(nullptr)
@@ -36,7 +38,7 @@ void ACharacterBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	// Retrieve the skeletal mesh.
-	USkeletalMeshComponent* SkeletalMesh = GetMesh();
+	SkeletalMesh = GetMesh();
 	check(SkeletalMesh != nullptr && "Character does not have a skeletal mesh!");
 
 	// Retrieve the animation instance.
@@ -92,7 +94,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	// Rotate the character towards the aiming point.
 	if(bIsAiming || bIsFiring)
 	{
-		auto PlayerController = Cast<APlayerControllerDefault>(GetController());
+		auto PlayerController = Cast<APlayerController>(GetController());
 
 		if(PlayerController)
 		{
@@ -160,4 +162,23 @@ void ACharacterBase::Fire(bool Toggle)
 void ACharacterBase::Aim(bool Toggle)
 {
 	bIsAiming = Toggle;
+}
+
+void ACharacterBase::PickUp(AActor* Actor)
+{
+	// Drop the current weapon.
+	if(CurrentWeapon)
+	{
+		CurrentWeapon->Detach();
+		CurrentWeapon = nullptr;
+	}
+
+	// Pick up the weapon.
+	AWeaponBase* Weapon = Cast<AWeaponBase>(Actor);
+
+	if(Weapon)
+	{
+		CurrentWeapon = Weapon;
+		CurrentWeapon->Attach(SkeletalMesh);
+	}
 }

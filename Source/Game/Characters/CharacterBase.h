@@ -28,6 +28,8 @@ public:
 	void Fire(bool Toggle);
 	void Aim(bool Toggle);
 
+	void PickUp(AActor* Actor);
+
 protected:
 	ACharacterBase();
 
@@ -36,7 +38,11 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	class USkeletalMeshComponent* SkeletalMesh;
 	class UCharacterBaseAnimation* AnimationInstance;
+
+	UPROPERTY()
+	class AWeaponBase* CurrentWeapon;
 
 	bool bIsAiming;
 	bool bIsFiring;
