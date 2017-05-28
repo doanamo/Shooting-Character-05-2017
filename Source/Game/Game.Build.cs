@@ -10,6 +10,7 @@ public class Game : ModuleRules
 		{
 			 "Game/Characters",
 			 "Game/Gameplay",
+			 "Game/Weapons",
 		});
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
