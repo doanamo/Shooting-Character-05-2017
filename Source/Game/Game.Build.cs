@@ -8,7 +8,7 @@ public class Game : ModuleRules
 	{
 		PrivateIncludePaths.AddRange(new string[]
 		{
-			 "Game/Character",
+			 "Game/Characters",
 			 "Game/Gameplay",
 		});
 
