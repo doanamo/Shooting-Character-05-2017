@@ -10,8 +10,12 @@ class GAME_API AWeaponBase : public AActor
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditDefaultsOnly)
 	float FireDelay;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UClass* Projectile;
 	
 public:	
 	void Attach(class USkeletalMeshComponent* Mesh);
@@ -28,6 +32,7 @@ protected:
 
 private:
 	class UPrimitiveComponent* Primitive;
+	class UArrowComponent* Muzzle;
 
 	float FireTimer;
 };
