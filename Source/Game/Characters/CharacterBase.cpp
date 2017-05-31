@@ -17,6 +17,8 @@ ACharacterBase::ACharacterBase() :
 	MaxJogSpeed = 280.0f;
 
 	// Character weapon handling values.
+	CurrentWeapon = nullptr;
+
 	bIsAiming = false;
 	bIsFiring = false;
 	FireDelay = 0.2f;
