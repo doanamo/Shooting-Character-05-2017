@@ -58,27 +58,13 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Handle weapon firing.
-	if(bIsFiring && CurrentWeapon)
-	{
-		if(CurrentWeapon->Fire(DeltaTime))
-		{
-			if(bIsAiming)
-			{
-				AnimationInstance->Montage_Play(FireAimAnimation);
-			}
-			else
-			{
-				AnimationInstance->Montage_Play(FireHipAnimation);
-			}
-		}
-	}
+	const bool bHasWeapon = CurrentWeapon != nullptr;
 
 	// Handle movement orientation and speed.
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
 
-	if(bIsAiming || bIsFiring)
+	if(bHasWeapon && (bIsAiming || bIsFiring))
 	{
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 
@@ -94,7 +80,7 @@ void ACharacterBase::Tick(float DeltaTime)
 	}
 
 	// Rotate the character towards the aiming point.
-	if(bIsAiming || bIsFiring)
+	if(bHasWeapon && (bIsAiming || bIsFiring))
 	{
 		auto PlayerController = Cast<APlayerController>(GetController());
 
@@ -122,13 +108,29 @@ void ACharacterBase::Tick(float DeltaTime)
 		}
 	}
 
+	// Handle weapon firing.
+	if(bIsFiring && CurrentWeapon)
+	{
+		if(CurrentWeapon->Fire(DeltaTime))
+		{
+			if(bIsAiming)
+			{
+				AnimationInstance->Montage_Play(FireAimAnimation);
+			}
+			else
+			{
+				AnimationInstance->Montage_Play(FireHipAnimation);
+			}
+		}
+	}
+
 	// Set animation weapon parameters.
-	AnimationInstance->bHasWeapon = CurrentWeapon != nullptr;
+	AnimationInstance->bHasWeapon = bHasWeapon;
 	AnimationInstance->bIsAiming = bIsAiming;
 
 	// Set animation movement parameters.
-	bool bIsMoving = GetCharacterMovement()->IsMovingOnGround();
 	float CurrentSpeed = GetVelocity().Size();
+	bool bIsMoving = CurrentSpeed > 0.0f && GetCharacterMovement()->IsMovingOnGround();
 
 	AnimationInstance->bIsMoving = bIsMoving;
 	AnimationInstance->MovementSpeed = bIsMoving ? CurrentSpeed : 0.0f;
