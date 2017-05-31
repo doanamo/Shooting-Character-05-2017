@@ -49,6 +49,4 @@ private:
 
 	bool bIsAiming;
 	bool bIsFiring;
-	float FireDelay;
-	float FireTimer;
 };

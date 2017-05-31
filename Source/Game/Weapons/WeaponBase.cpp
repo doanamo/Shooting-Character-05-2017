@@ -10,6 +10,10 @@ AWeaponBase::AWeaponBase() :
 	Primitive(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Weapon handling values.
+	FireDelay = 0.2f;
+	FireTimer = 0.0f;
 }
 
 void AWeaponBase::PostInitializeComponents()
@@ -45,4 +49,21 @@ void AWeaponBase::Detach()
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	SetActorEnableCollision(true);
 	Primitive->SetSimulatePhysics(true);
+}
+
+bool AWeaponBase::Fire(float DeltaTime)
+{
+	// Handle weapon firing.
+	FireTimer = FMath::Max(0.0f, FireTimer - DeltaTime);
+
+	if(FireTimer == 0.0f)
+	{
+		//
+
+		FireTimer = FireDelay;
+
+		return true;
+	}
+
+	return false;
 }

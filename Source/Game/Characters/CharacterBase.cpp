@@ -24,8 +24,6 @@ ACharacterBase::ACharacterBase() :
 
 	bIsAiming = false;
 	bIsFiring = false;
-	FireDelay = 0.2f;
-	FireTimer = 0.0f;
 
 	// Set default movement speed.
 	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
@@ -61,20 +59,19 @@ void ACharacterBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// Handle weapon firing.
-	FireTimer = FMath::Max(0.0f, FireTimer - DeltaTime);
-
-	if(bIsFiring && FireTimer == 0.0f)
+	if(bIsFiring && CurrentWeapon)
 	{
-		if(bIsAiming)
+		if(CurrentWeapon->Fire(DeltaTime))
 		{
-			AnimationInstance->Montage_Play(FireAimAnimation);
+			if(bIsAiming)
+			{
+				AnimationInstance->Montage_Play(FireAimAnimation);
+			}
+			else
+			{
+				AnimationInstance->Montage_Play(FireHipAnimation);
+			}
 		}
-		else
-		{
-			AnimationInstance->Montage_Play(FireHipAnimation);
-		}
-
-		FireTimer = FireDelay;
 	}
 
 	// Handle movement orientation and speed.
@@ -175,6 +172,7 @@ void ACharacterBase::PickUp(AActor* Actor)
 	// Drop the current weapon.
 	if(CurrentWeapon)
 	{
+		CurrentWeapon->SetOwner(nullptr);
 		CurrentWeapon->Detach();
 		CurrentWeapon = nullptr;
 	}
@@ -191,6 +189,7 @@ void ACharacterBase::PickUp(AActor* Actor)
 		{
 			CurrentWeapon = Weapon;
 			CurrentWeapon->Attach(SkeletalMesh);
+			CurrentWeapon->SetOwner(this);
 		}
 	}
 }
