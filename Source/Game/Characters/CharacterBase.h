@@ -18,6 +18,9 @@ public:
 	float MaxJogSpeed;
 
 	UPROPERTY(EditDefaultsOnly)
+	float MaxPickUpDistance;
+
+	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FireHipAnimation;
 
 	UPROPERTY(EditDefaultsOnly)

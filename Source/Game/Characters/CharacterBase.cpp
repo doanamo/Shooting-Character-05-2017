@@ -16,6 +16,9 @@ ACharacterBase::ACharacterBase() :
 	MaxWalkSpeed = 140.0f;
 	MaxJogSpeed = 280.0f;
 
+	// Character interaction values.
+	MaxPickUpDistance = 200.0f;
+
 	// Character weapon handling values.
 	CurrentWeapon = nullptr;
 
@@ -176,12 +179,18 @@ void ACharacterBase::PickUp(AActor* Actor)
 		CurrentWeapon = nullptr;
 	}
 
-	// Pick up the weapon.
-	AWeaponBase* Weapon = Cast<AWeaponBase>(Actor);
+	// Check distance from the object.
+	float Distance = Actor->GetDistanceTo(this);
 
-	if(Weapon)
+	// Pick up the weapon.
+	if(Distance <= MaxPickUpDistance)
 	{
-		CurrentWeapon = Weapon;
-		CurrentWeapon->Attach(SkeletalMesh);
+		AWeaponBase* Weapon = Cast<AWeaponBase>(Actor);
+
+		if(Weapon)
+		{
+			CurrentWeapon = Weapon;
+			CurrentWeapon->Attach(SkeletalMesh);
+		}
 	}
 }
