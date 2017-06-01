@@ -58,13 +58,15 @@ void AWeaponBase::Attach(USkeletalMeshComponent* Mesh)
 	if(!Mesh)
 		return;
 
-	Primitive->SetSimulatePhysics(false);
+	// Attach weapon to the character's mesh.
 	SetActorEnableCollision(false);
+	Primitive->SetSimulatePhysics(false);
 	AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetIncludingScale, "WeaponSocket");
 }
 
 void AWeaponBase::Detach()
 {
+	// Detach weapon from the character's mesh.
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	SetActorEnableCollision(true);
 	Primitive->SetSimulatePhysics(true);
