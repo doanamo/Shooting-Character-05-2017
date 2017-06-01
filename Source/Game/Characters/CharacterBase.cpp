@@ -178,6 +178,10 @@ void ACharacterBase::PickUp(AActor* Actor)
 		CurrentWeapon = nullptr;
 	}
 
+	// Return if null character has been passed.
+	if(Actor == nullptr)
+		return;
+
 	// Check distance from the object.
 	float Distance = Actor->GetDistanceTo(this);
 

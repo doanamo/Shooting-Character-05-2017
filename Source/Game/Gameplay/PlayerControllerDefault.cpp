@@ -92,7 +92,7 @@ void APlayerControllerDefault::PickUpPressed()
 		return;
 
 	FHitResult TraceResult;
-	if(GetHitResultUnderCursor(ECollisionChannel::ECC_WorldDynamic, false, TraceResult))
+	if(GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, TraceResult))
 	{
 		Character->PickUp(TraceResult.GetActor());
 	}

@@ -12,12 +12,17 @@ AProjectileBase::AProjectileBase()
 	LifeTime = 1.0f;
 }
 
+void AProjectileBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
+
 void AProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	// Destroy the projectile after some time.
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AProjectileBase::DestroyProjectile, LifeTime, false);
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AProjectileBase::DestroySelf, LifeTime, false);
 }
 
 void AProjectileBase::Tick(float DeltaTime)
@@ -27,10 +32,10 @@ void AProjectileBase::Tick(float DeltaTime)
 	// Move the projectile in a forward direction.
 	FVector Location = GetActorLocation();
 	Location += GetActorForwardVector() * Speed * DeltaTime;
-	SetActorLocation(Location);
+	SetActorLocation(Location, true);
 }
 
-void AProjectileBase::DestroyProjectile()
+void AProjectileBase::DestroySelf()
 {
 	// Destroy self.
 	Destroy();
