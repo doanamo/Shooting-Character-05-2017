@@ -33,12 +33,17 @@ public:
 
 	void PickUp(AActor* Actor);
 
+	class USkeletalMeshComponent* GetSkeletalMesh();
+
 protected:
 	ACharacterBase();
 
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void OnWeaponFired();
 
 private:
 	class USkeletalMeshComponent* SkeletalMesh;

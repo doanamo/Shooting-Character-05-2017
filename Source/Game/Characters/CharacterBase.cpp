@@ -108,22 +108,6 @@ void ACharacterBase::Tick(float DeltaTime)
 		}
 	}
 
-	// Handle weapon firing.
-	if(bIsFiring && CurrentWeapon)
-	{
-		if(CurrentWeapon->Fire(DeltaTime))
-		{
-			if(bIsAiming)
-			{
-				AnimationInstance->Montage_Play(FireAimAnimation);
-			}
-			else
-			{
-				AnimationInstance->Montage_Play(FireHipAnimation);
-			}
-		}
-	}
-
 	// Set animation weapon parameters.
 	AnimationInstance->bHasWeapon = bHasWeapon;
 	AnimationInstance->bIsAiming = bIsAiming;
@@ -161,7 +145,19 @@ void ACharacterBase::Move(FVector Direction, float Scale)
 
 void ACharacterBase::Fire(bool Toggle)
 {
-	bIsFiring = Toggle;
+	if(CurrentWeapon)
+	{
+		if(Toggle)
+		{
+			CurrentWeapon->PullTrigger();
+		}
+		else
+		{
+			CurrentWeapon->ReleaseTrigger();
+		}
+		
+		bIsFiring = Toggle;
+	}
 }
 
 void ACharacterBase::Aim(bool Toggle)
@@ -174,7 +170,10 @@ void ACharacterBase::PickUp(AActor* Actor)
 	// Drop the current weapon.
 	if(CurrentWeapon)
 	{
-		CurrentWeapon->SetOwner(nullptr);
+		// Unsubscribe from weapon's events.
+		CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
+
+		// Detach weapon from the character.
 		CurrentWeapon->Detach();
 		CurrentWeapon = nullptr;
 	}
@@ -189,9 +188,30 @@ void ACharacterBase::PickUp(AActor* Actor)
 
 		if(Weapon)
 		{
+			// Attach weapon to the character.
 			CurrentWeapon = Weapon;
-			CurrentWeapon->Attach(SkeletalMesh);
-			CurrentWeapon->SetOwner(this);
+			CurrentWeapon->Attach(this);
+
+			// Subscribe to weapon's events.
+			CurrentWeapon->OnWeaponFired.AddDynamic(this, &ACharacterBase::OnWeaponFired);
 		}
 	}
+}
+
+void ACharacterBase::OnWeaponFired()
+{
+	// Play recail animation depending on the stance.
+	if(bIsAiming)
+	{
+		AnimationInstance->Montage_Play(FireAimAnimation);
+	}
+	else
+	{
+		AnimationInstance->Montage_Play(FireHipAnimation);
+	}
+}
+
+class USkeletalMeshComponent* ACharacterBase::GetSkeletalMesh()
+{
+	return SkeletalMesh;
 }

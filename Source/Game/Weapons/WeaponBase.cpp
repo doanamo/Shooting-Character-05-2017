@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "WeaponBase.h"
+#include "Characters/CharacterBase.h"
 
 #include <Components/SkeletalMeshComponent.h>
 #include <Components/PrimitiveComponent.h>
@@ -13,9 +14,8 @@ AWeaponBase::AWeaponBase() :
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Weapon handling values.
-	FireDelay = 0.2f;
-	FireTimer = 0.0f;
+	// Set default variables.
+	FireRate = 10.0f;
 }
 
 void AWeaponBase::PostInitializeComponents()
@@ -48,47 +48,60 @@ void AWeaponBase::BeginPlay()
 void AWeaponBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// Update weapon's fire timer.
-	FireTimer = FMath::Max(0.0f, FireTimer - DeltaTime);
 }
 
-void AWeaponBase::Attach(USkeletalMeshComponent* Mesh)
+void AWeaponBase::Attach(class ACharacterBase* Character)
 {
-	if(!Mesh)
-		return;
+	verify(Character != nullptr && "Weapon's attach function called with null character!");
 
-	// Attach weapon to the character's mesh.
+	// Set owner of this weapon.
+	SetOwner(Character);
+
+	// Disable weapon's physics.
 	SetActorEnableCollision(false);
 	Primitive->SetSimulatePhysics(false);
-	AttachToComponent(Mesh, FAttachmentTransformRules::SnapToTargetIncludingScale, "WeaponSocket");
+
+	// Attach weapon to the character's mesh.
+	AttachToComponent(Character->GetSkeletalMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "WeaponSocket");
 }
 
 void AWeaponBase::Detach()
 {
-	// Detach weapon from the character's mesh.
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	// Stop firing when the weapon is detached.
+	ReleaseTrigger();
+
+	// Unset owner of the weapon.
+	SetOwner(nullptr);
+
+	// Re-enable weapon's physics.
 	SetActorEnableCollision(true);
 	Primitive->SetSimulatePhysics(true);
+
+	// Detach weapon from the character's mesh.
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 }
 
-bool AWeaponBase::Fire(float DeltaTime)
+void AWeaponBase::PullTrigger()
 {
-	// Handle weapon firing.
-	if(FireTimer == 0.0f)
-	{
-		// Spawn a projectile.
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Instigator = Cast<APawn>(GetOwner());
+	// Start the firing timer.
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AWeaponBase::Fire, 1.0f / FireRate, true);
+}
 
-		FTransform Transform = Muzzle->GetComponentToWorld();
-		GetWorld()->SpawnActor<AActor>(Projectile, Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParams);
+void AWeaponBase::ReleaseTrigger()
+{
+	// Clear the firing timer.
+	GetWorld()->GetTimerManager().ClearTimer(Timer);
+}
 
-		// Increment the delay timer.
-		FireTimer = FireDelay;
+void AWeaponBase::Fire()
+{
+	// Spawn a projectile.
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Instigator = Cast<APawn>(GetOwner());
 
-		return true;
-	}
+	FTransform Transform = Muzzle->GetComponentToWorld();
+	GetWorld()->SpawnActor<AActor>(ProjectileType, Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParams);
 
-	return false;
+	// Broadcast a weapon fired event.
+	OnWeaponFired.Broadcast();
 }

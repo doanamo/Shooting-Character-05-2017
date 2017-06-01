@@ -5,6 +5,8 @@
 #include <GameFramework/Actor.h>
 #include "WeaponBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponFiredSignature);
+
 UCLASS()
 class GAME_API AWeaponBase : public AActor
 {
@@ -12,16 +14,20 @@ class GAME_API AWeaponBase : public AActor
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	float FireDelay;
+	float FireRate;
 
 	UPROPERTY(EditDefaultsOnly)
-	class UClass* Projectile;
+	class UClass* ProjectileType;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnWeaponFiredSignature OnWeaponFired;
 	
 public:	
-	void Attach(class USkeletalMeshComponent* Mesh);
+	void Attach(class ACharacterBase* Character);
 	void Detach();
 
-	bool Fire(float DeltaTime);
+	void PullTrigger();
+	void ReleaseTrigger();
 
 protected:
 	AWeaponBase();
@@ -30,9 +36,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
+	void Fire();
+
 private:
 	class UPrimitiveComponent* Primitive;
 	class UArrowComponent* Muzzle;
 
-	float FireTimer;
+	FTimerHandle Timer;
 };
