@@ -22,7 +22,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnWeaponFiredSignature OnWeaponFired;
 	
-public:	
+public:
 	void Attach(class ACharacterBase* Character);
 	void Detach();
 

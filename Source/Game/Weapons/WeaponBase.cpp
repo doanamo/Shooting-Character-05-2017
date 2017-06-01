@@ -94,7 +94,7 @@ void AWeaponBase::ReleaseTrigger()
 	if(GetWorld()->GetTimerManager().TimerExists(FireTimer))
 	{
 		float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(FireTimer);
-		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &AWeaponBase::ClearFireTimer, 1.0f, false, RemainingTime);
+		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &AWeaponBase::ClearFireTimer, RemainingTime, false);
 	}
 }
 
