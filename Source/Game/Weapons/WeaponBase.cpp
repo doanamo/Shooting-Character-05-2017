@@ -26,7 +26,7 @@ void AWeaponBase::PostInitializeComponents()
 	Primitive = Cast<UPrimitiveComponent>(GetRootComponent());
 	check(Primitive != nullptr && "Actor is mising a primitive component!");
 
-	// Get the muzzle flash component.
+	// Get the muzzle arrow component.
 	auto Components = GetComponents();
 	for(auto Component : Components)
 	{
