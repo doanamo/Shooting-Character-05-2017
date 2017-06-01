@@ -91,8 +91,11 @@ void AWeaponBase::PullTrigger()
 void AWeaponBase::ReleaseTrigger()
 {
 	// Replace timer with one that will prevent the primary fire timer from triggering again too quickly.
-	float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(FireTimer);
-	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &AWeaponBase::ClearFireTimer, 1.0f, false, RemainingTime);
+	if(GetWorld()->GetTimerManager().TimerExists(FireTimer))
+	{
+		float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(FireTimer);
+		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &AWeaponBase::ClearFireTimer, 1.0f, false, RemainingTime);
+	}
 }
 
 void AWeaponBase::Fire()
