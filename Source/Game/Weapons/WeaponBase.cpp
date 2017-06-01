@@ -83,14 +83,16 @@ void AWeaponBase::Detach()
 
 void AWeaponBase::PullTrigger()
 {
-	// Start the firing timer.
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AWeaponBase::Fire, 1.0f / FireRate, true);
+	// Start the firing timer and use the remaining time of the previous timer.
+	float RemainingTime = FMath::Max(GetWorld()->GetTimerManager().GetTimerRemaining(Timer), 0.0f);
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AWeaponBase::Fire, 1.0f / FireRate, true, RemainingTime);
 }
 
 void AWeaponBase::ReleaseTrigger()
 {
-	// Clear the firing timer.
-	GetWorld()->GetTimerManager().ClearTimer(Timer);
+	// Replace timer with one that will prevent the primary fire timer from triggering again too quickly.
+	float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(Timer);
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &AWeaponBase::ClearTimer, 1.0f, false, RemainingTime);
 }
 
 void AWeaponBase::Fire()
@@ -104,4 +106,10 @@ void AWeaponBase::Fire()
 
 	// Broadcast a weapon fired event.
 	OnWeaponFired.Broadcast();
+}
+
+void AWeaponBase::ClearTimer()
+{
+	// Clear the timer after a delay set in ReleaseTrigger() function.
+	GetWorld()->GetTimerManager().ClearTimer(Timer);
 }

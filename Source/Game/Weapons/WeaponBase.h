@@ -39,8 +39,11 @@ protected:
 	void Fire();
 
 private:
-	class UPrimitiveComponent* Primitive;
-	class UArrowComponent* Muzzle;
+	void ClearTimer();
 
 	FTimerHandle Timer;
+
+private:
+	class UPrimitiveComponent* Primitive;
+	class UArrowComponent* Muzzle;
 };
