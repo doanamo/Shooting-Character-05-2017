@@ -39,9 +39,8 @@ protected:
 	void Fire();
 
 private:
-	void ClearTimer();
-
-	FTimerHandle Timer;
+	void ClearFireTimer();
+	FTimerHandle FireTimer;
 
 private:
 	class UPrimitiveComponent* Primitive;
