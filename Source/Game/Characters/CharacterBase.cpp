@@ -226,7 +226,21 @@ void ACharacterBase::OnWeaponFired()
 
 void ACharacterBase::OnDeath()
 {
-	Destroy();
+	check(Health->IsDead() && "Called OnDeath() while alive!");
+
+	// Disable character's capsule collision.
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Allow character's ragdoll to be pushed around.
+	/*
+	SkeletalMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	SkeletalMesh->CanCharacterStepUpOn = ECB_No;
+	SkeletalMesh->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	*/
+
+	// Simulate character's ragdoll.
+	SkeletalMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SkeletalMesh->SetSimulatePhysics(true);
 }
 
 class USkeletalMeshComponent* ACharacterBase::GetSkeletalMesh()
