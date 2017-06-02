@@ -27,14 +27,19 @@ void UHealthComponent::InitializeComponent()
 		CurrentHealth = MaximumHealth;
 	}
 
+	// Subscribe to the delegate in the attached actor.
+	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::OnTakeAnyDamage);
+}
+
+void UHealthComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
 	// Broadcast actor's death event if initial health is zero.
 	if(CurrentHealth == 0.0f)
 	{
 		OnDeath.Broadcast();
 	}
-
-	// Subscribe to the delegate in the attached actor.
-	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::OnTakeAnyDamage);
 }
 
 void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
