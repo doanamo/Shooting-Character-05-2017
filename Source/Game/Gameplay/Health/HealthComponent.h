@@ -15,10 +15,10 @@ class GAME_API UHealthComponent : public UActorComponent
 public:
 	UHealthComponent();
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly)
 	float MaximumHealth;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly)
 	float CurrentHealth;
 
 	UPROPERTY(BlueprintAssignable)
