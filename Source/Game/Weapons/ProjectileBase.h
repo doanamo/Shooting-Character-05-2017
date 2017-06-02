@@ -12,6 +12,9 @@ class GAME_API AProjectileBase : public AActor
 
 public:
 	UPROPERTY(EditDefaultsOnly)
+	float Damage;
+
+	UPROPERTY(EditDefaultsOnly)
 	float Speed;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -23,6 +26,9 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void OnActorHit(AActor* Self, AActor* Other, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
 	void DestroySelf();

@@ -8,6 +8,7 @@ AProjectileBase::AProjectileBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Default projectile parameters.
+	Damage = 10.0f;
 	Speed = 1200.0f;
 	LifeTime = 1.0f;
 }
@@ -15,6 +16,9 @@ AProjectileBase::AProjectileBase()
 void AProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	// Subscribe to actor's hit event.
+	AActor::OnActorHit.AddDynamic(this, &AProjectileBase::OnActorHit);
 }
 
 void AProjectileBase::BeginPlay()
@@ -33,6 +37,19 @@ void AProjectileBase::Tick(float DeltaTime)
 	FVector Location = GetActorLocation();
 	Location += GetActorForwardVector() * Speed * DeltaTime;
 	SetActorLocation(Location, true);
+}
+
+void AProjectileBase::OnActorHit(AActor* Self, AActor* Other, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// Cause damage to the hit actor.
+	if(Other != nullptr)
+	{
+		FDamageEvent DamageEvent;
+		Other->TakeDamage(Damage, DamageEvent, nullptr, this);
+	}
+
+	// Destroy self.
+	Destroy();
 }
 
 void AProjectileBase::DestroySelf()
