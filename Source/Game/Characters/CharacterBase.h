@@ -45,7 +45,11 @@ protected:
 	UFUNCTION()
 	void OnWeaponFired();
 
+	UFUNCTION()
+	void OnDeath();
+
 private:
+	class UHealthComponent* Health;
 	class USkeletalMeshComponent* SkeletalMesh;
 	class UCharacterBaseAnimation* AnimationInstance;
 

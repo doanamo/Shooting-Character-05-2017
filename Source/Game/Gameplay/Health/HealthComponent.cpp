@@ -17,10 +17,20 @@ void UHealthComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
+	// Sanitize default values.
+	MaximumHealth = FMath::Max(1.0f, MaximumHealth);
+	CurrentHealth = FMath::Min(CurrentHealth, MaximumHealth);
+
 	// Set current health to maximum health.
 	if(CurrentHealth < 0.0f)
 	{
 		CurrentHealth = MaximumHealth;
+	}
+
+	// Broadcast actor's death event if initial health is zero.
+	if(CurrentHealth == 0.0f)
+	{
+		OnDeath.Broadcast();
 	}
 
 	// Subscribe to the delegate in the attached actor.
@@ -34,12 +44,22 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	// Update health value.
+	// Check if already dead.
+	if(IsDead())
+		return;
+
+	// Update the current health value.
 	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaximumHealth);
 
-	// Handle health value reaching zero.
+	// Handle current health value reaching zero.
 	if(CurrentHealth <= 0.0f)
 	{
-		GetOwner()->Destroy();
+		// Broadcast actor's death event.
+		OnDeath.Broadcast();
 	}
+}
+
+bool UHealthComponent::IsDead() const
+{
+	return CurrentHealth <= 0.0f;
 }

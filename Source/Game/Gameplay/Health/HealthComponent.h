@@ -5,6 +5,8 @@
 #include <Components/ActorComponent.h>
 #include "HealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class GAME_API UHealthComponent : public UActorComponent
 {
@@ -18,6 +20,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float CurrentHealth;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathSignature OnDeath;
+
+	UFUNCTION()
+	bool IsDead() const;
 
 protected:
 	virtual void InitializeComponent() override;

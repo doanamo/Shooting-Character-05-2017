@@ -4,10 +4,12 @@
 #include "CharacterBase.h"
 #include "CharacterBaseAnimation.h"
 #include "Weapons/WeaponBase.h"
-
+#include "Gameplay/Health/HealthComponent.h"
 #include <GameFramework/PlayerController.h>
 
 ACharacterBase::ACharacterBase() :
+	Health(nullptr),
+	SkeletalMesh(nullptr),
 	AnimationInstance(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -40,9 +42,16 @@ void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	// Retrieve the skeletal mesh.
+	// Retrieve the health component.
+	Health = FindComponentByClass<UHealthComponent>();
+	check(Health != nullptr && "Character does not have a health component!");
+
+	// Subscribe to health component's events.
+	Health->OnDeath.AddDynamic(this, &ACharacterBase::OnDeath);
+
+	// Retrieve the skeletal mesh component.
 	SkeletalMesh = GetMesh();
-	check(SkeletalMesh != nullptr && "Character does not have a skeletal mesh!");
+	check(SkeletalMesh != nullptr && "Character does not have a skeletal mesh component!");
 
 	// Retrieve the animation instance.
 	AnimationInstance = Cast<UCharacterBaseAnimation>(SkeletalMesh->GetAnimInstance());
@@ -213,6 +222,11 @@ void ACharacterBase::OnWeaponFired()
 	{
 		AnimationInstance->Montage_Play(FireHipAnimation);
 	}
+}
+
+void ACharacterBase::OnDeath()
+{
+	Destroy();
 }
 
 class USkeletalMeshComponent* ACharacterBase::GetSkeletalMesh()
