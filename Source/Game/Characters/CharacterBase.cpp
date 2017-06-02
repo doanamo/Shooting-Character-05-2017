@@ -228,6 +228,9 @@ void ACharacterBase::OnDeath()
 {
 	check(Health->IsDead() && "Called OnDeath() while alive!");
 
+	// Drop held weapon.
+	PickUp(nullptr);
+
 	// Disable character's capsule collision.
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
