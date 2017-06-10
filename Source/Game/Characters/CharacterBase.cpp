@@ -185,6 +185,17 @@ void ACharacterBase::Aim(bool Toggle)
 
 void ACharacterBase::PickUp(AItemBase* Item)
 {
+	// Drop the current weapon.
+	if(CurrentWeapon != nullptr)
+	{
+		// Unsubscribe from weapon's events.
+		CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
+
+		// Detach weapon from the character.
+		CurrentWeapon->Detach();
+		CurrentWeapon = nullptr;
+	}
+
 	// Return if null character has been passed.
 	if(Item == nullptr)
 		return;
@@ -200,17 +211,6 @@ void ACharacterBase::PickUp(AItemBase* Item)
 
 	if(Weapon != nullptr)
 	{
-		// Drop the current weapon.
-		if(CurrentWeapon != nullptr)
-		{
-			// Unsubscribe from weapon's events.
-			CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
-
-			// Detach weapon from the character.
-			CurrentWeapon->Detach();
-			CurrentWeapon = nullptr;
-		}
-
 		// Attach weapon to the character.
 		CurrentWeapon = Weapon;
 		CurrentWeapon->Attach(this);
@@ -236,6 +236,9 @@ void ACharacterBase::OnWeaponFired()
 void ACharacterBase::OnDeath()
 {
 	check(Health->IsDead() && "Called OnDeath() while alive!");
+
+	// Stop ticking while dead.
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Drop held weapon.
 	PickUp(nullptr);
