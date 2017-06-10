@@ -30,6 +30,8 @@ public:
 	void PullTrigger();
 	void ReleaseTrigger();
 
+	FVector GetMuzzleLocation() const;
+
 protected:
 	AWeaponBase();
 

@@ -16,9 +16,18 @@ ACharacterBase::ACharacterBase() :
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Character movement speed values.
+	// Set default movement speed.
 	MaxWalkSpeed = 140.0f;
 	MaxJogSpeed = 280.0f;
+
+	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
+
+	// Do not update the controller's rotation yaw.
+	// Has to be disabled for "Orient Rotation to Movement" to work.
+	bUseControllerRotationYaw = false;
+
+	// Rotate the character during movement by default.
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	// Character interaction values.
 	MaxPickUpDistance = 200.0f;
@@ -28,16 +37,6 @@ ACharacterBase::ACharacterBase() :
 
 	bIsAiming = false;
 	bIsFiring = false;
-
-	// Set default movement speed.
-	GetCharacterMovement()->MaxWalkSpeed = MaxJogSpeed;
-
-	// Do not update the controller's rotation yaw.
-	// Has to be disabled for "Orient Rotation to Movement" to work.
-	bUseControllerRotationYaw = false;
-
-	// Rotate the character during movement.
-	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ACharacterBase::PostInitializeComponents()
@@ -69,6 +68,7 @@ void ACharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Check if we have a weapon.
 	const bool bHasWeapon = CurrentWeapon != nullptr;
 
 	// Handle movement orientation and speed.
@@ -97,24 +97,31 @@ void ACharacterBase::Tick(float DeltaTime)
 
 		if(PlayerController)
 		{
+			// Cast cursor trace to world.
 			FVector MouseLocation;
 			FVector MouseDirection;
 
-			if(PlayerController->DeprojectMousePositionToWorld(MouseLocation, MouseDirection))
+			bool Success = PlayerController->DeprojectMousePositionToWorld(MouseLocation, MouseDirection);
+
+			// Rotate the character towards the cursor.
+			if(Success)
 			{
+				// Cast the cursor onto a plane.
 				FVector LineBegin = MouseLocation;
 				FVector LineEnd = MouseLocation + MouseDirection * 10000.0f;
 
-				FVector PlaneOrigin = GetActorLocation();
+				FVector PlaneOrigin = CurrentWeapon->GetMuzzleLocation();
 				FVector PlaneNormal = FVector(0.0f, 0.0f, 1.0f);
 
 				FVector LookLocation = FMath::LinePlaneIntersection(LineBegin, LineEnd, PlaneOrigin, PlaneNormal);
 
+				// Rotate the cursor toward the intersection of the cursor and the plane.
 				FRotator LookRotation = (LookLocation - GetActorLocation()).Rotation();
+
 				LookRotation.Pitch = 0.0f;
 				LookRotation.Roll = 0.0f;
 
-				SetActorRotation(FMath::Lerp(GetActorRotation(), LookRotation, 0.05f));
+				SetActorRotation(FMath::RInterpTo(GetActorRotation(), LookRotation, DeltaTime, 10.0f));
 			}
 		}
 	}

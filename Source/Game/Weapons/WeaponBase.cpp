@@ -83,18 +83,22 @@ void AWeaponBase::Detach()
 
 void AWeaponBase::PullTrigger()
 {
+	auto& TimerManager = GetWorld()->GetTimerManager();
+
 	// Start the firing timer and use the remaining time of the previous timer.
-	float RemainingTime = FMath::Max(GetWorld()->GetTimerManager().GetTimerRemaining(FireTimer), 0.0f);
-	GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &AWeaponBase::Fire, 1.0f / FireRate, true, RemainingTime);
+	float RemainingTime = FMath::Max(TimerManager.GetTimerRemaining(FireTimer), 0.0f);
+	TimerManager.SetTimer(FireTimer, this, &AWeaponBase::Fire, 1.0f / FireRate, true, RemainingTime);
 }
 
 void AWeaponBase::ReleaseTrigger()
 {
+	auto& TimerManager = GetWorld()->GetTimerManager();
+
 	// Replace timer with one that will prevent the primary fire timer from triggering again too quickly.
-	if(GetWorld()->GetTimerManager().TimerExists(FireTimer))
+	if(TimerManager.TimerExists(FireTimer))
 	{
-		float RemainingTime = GetWorld()->GetTimerManager().GetTimerRemaining(FireTimer);
-		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &AWeaponBase::ClearFireTimer, RemainingTime, false);
+		float RemainingTime = TimerManager.GetTimerRemaining(FireTimer);
+		TimerManager.SetTimer(FireTimer, this, &AWeaponBase::ClearFireTimer, RemainingTime, false);
 	}
 }
 
@@ -115,4 +119,9 @@ void AWeaponBase::ClearFireTimer()
 {
 	// Clear the timer after a delay set in ReleaseTrigger() function.
 	GetWorld()->GetTimerManager().ClearTimer(FireTimer);
+}
+
+FVector AWeaponBase::GetMuzzleLocation() const
+{
+	return Muzzle->GetComponentToWorld().GetLocation();
 }
