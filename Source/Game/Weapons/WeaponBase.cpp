@@ -2,11 +2,11 @@
 
 #include "Game.h"
 #include "WeaponBase.h"
-#include "Characters/CharacterBase.h"
 
 #include <Components/SkeletalMeshComponent.h>
 #include <Components/PrimitiveComponent.h>
 #include <Components/ArrowComponent.h>
+#include "Characters/CharacterBase.h"
 
 AWeaponBase::AWeaponBase() :
 	Primitive(nullptr),

@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "PlayerControllerDefault.h"
 #include "Characters/CharacterBase.h"
+#include "Items/ItemBase.h"
 
 APlayerControllerDefault::APlayerControllerDefault()
 {
@@ -91,9 +92,16 @@ void APlayerControllerDefault::PickUpPressed()
 	if(!Character)
 		return;
 
+	// Run a trace to get an actor below the cursor.
 	FHitResult TraceResult;
 	if(GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, TraceResult))
 	{
-		Character->PickUp(TraceResult.GetActor());
+		// Check if the traced actor is an item.
+		AItemBase* Item = Cast<AItemBase>(TraceResult.GetActor());
+
+		if(Item != nullptr)
+		{
+			Character->PickUp(Item);
+		}
 	}
 }

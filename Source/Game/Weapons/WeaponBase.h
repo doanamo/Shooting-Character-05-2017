@@ -3,12 +3,13 @@
 #pragma once
 
 #include <GameFramework/Actor.h>
+#include "Items/ItemBase.h"
 #include "WeaponBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponFiredSignature);
 
 UCLASS()
-class GAME_API AWeaponBase : public AActor
+class GAME_API AWeaponBase : public AItemBase
 {
 	GENERATED_BODY()
 

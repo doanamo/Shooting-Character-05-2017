@@ -3,9 +3,11 @@
 #include "Game.h"
 #include "CharacterBase.h"
 #include "CharacterBaseAnimation.h"
-#include "Weapons/WeaponBase.h"
-#include "Gameplay/Health/HealthComponent.h"
+
 #include <GameFramework/PlayerController.h>
+#include "Gameplay/Health/HealthComponent.h"
+#include "Weapons/WeaponBase.h"
+#include "Items/ItemBase.h"
 
 ACharacterBase::ACharacterBase() :
 	Health(nullptr),
@@ -174,40 +176,40 @@ void ACharacterBase::Aim(bool Toggle)
 	bIsAiming = Toggle;
 }
 
-void ACharacterBase::PickUp(AActor* Actor)
+void ACharacterBase::PickUp(AItemBase* Item)
 {
-	// Drop the current weapon.
-	if(CurrentWeapon)
-	{
-		// Unsubscribe from weapon's events.
-		CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
-
-		// Detach weapon from the character.
-		CurrentWeapon->Detach();
-		CurrentWeapon = nullptr;
-	}
-
 	// Return if null character has been passed.
-	if(Actor == nullptr)
+	if(Item == nullptr)
 		return;
 
 	// Check distance from the object.
-	float Distance = Actor->GetDistanceTo(this);
+	float Distance = Item->GetDistanceTo(this);
 
-	// Pick up the weapon.
-	if(Distance <= MaxPickUpDistance)
+	if(Distance > MaxPickUpDistance)
+		return;
+
+	// Check if the item is a weapon.
+	AWeaponBase* Weapon = Cast<AWeaponBase>(Item);
+
+	if(Weapon != nullptr)
 	{
-		AWeaponBase* Weapon = Cast<AWeaponBase>(Actor);
-
-		if(Weapon)
+		// Drop the current weapon.
+		if(CurrentWeapon != nullptr)
 		{
-			// Attach weapon to the character.
-			CurrentWeapon = Weapon;
-			CurrentWeapon->Attach(this);
+			// Unsubscribe from weapon's events.
+			CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
 
-			// Subscribe to weapon's events.
-			CurrentWeapon->OnWeaponFired.AddDynamic(this, &ACharacterBase::OnWeaponFired);
+			// Detach weapon from the character.
+			CurrentWeapon->Detach();
+			CurrentWeapon = nullptr;
 		}
+
+		// Attach weapon to the character.
+		CurrentWeapon = Weapon;
+		CurrentWeapon->Attach(this);
+
+		// Subscribe to weapon's events.
+		CurrentWeapon->OnWeaponFired.AddDynamic(this, &ACharacterBase::OnWeaponFired);
 	}
 }
 
