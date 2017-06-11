@@ -49,6 +49,10 @@ protected:
 	void OnDeath();
 
 private:
+	void HoldWeapon(class AWeaponBase* Weapon);
+	void DropWeapon();
+
+private:
 	class UHealthComponent* Health;
 	class USkeletalMeshComponent* SkeletalMesh;
 	class UCharacterBaseAnimation* AnimationInstance;

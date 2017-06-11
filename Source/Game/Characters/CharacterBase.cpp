@@ -186,15 +186,7 @@ void ACharacterBase::Aim(bool Toggle)
 void ACharacterBase::Interact(AActor* Actor)
 {
 	// Drop the current weapon.
-	if(CurrentWeapon != nullptr)
-	{
-		// Unsubscribe from weapon's events.
-		CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
-
-		// Detach weapon from the character.
-		CurrentWeapon->Detach();
-		CurrentWeapon = nullptr;
-	}
+	DropWeapon();
 
 	// Check if the actor is an item.
 	AItemBase* Item = Cast<AItemBase>(Actor);
@@ -208,17 +200,44 @@ void ACharacterBase::Interact(AActor* Actor)
 	if(Distance > MaxPickUpDistance)
 		return;
 
-	// Check if the item is a weapon.
+	// Hold the item if it's a weapon.
 	AWeaponBase* Weapon = Cast<AWeaponBase>(Item);
 
 	if(Weapon != nullptr)
 	{
-		// Attach weapon to the character.
-		CurrentWeapon = Weapon;
-		CurrentWeapon->Attach(this);
+		HoldWeapon(Weapon);
+	}
+}
 
-		// Subscribe to weapon's events.
-		CurrentWeapon->OnWeaponFired.AddDynamic(this, &ACharacterBase::OnWeaponFired);
+void ACharacterBase::HoldWeapon(AWeaponBase* Weapon)
+{
+	check(Weapon != nullptr && "Passed a null weapon!");
+
+	// Drop currently carried weapon first.
+	DropWeapon();
+
+	// Attach weapon to the character.
+	CurrentWeapon = Weapon;
+	CurrentWeapon->Attach(this);
+
+	// Subscribe to weapon's events.
+	CurrentWeapon->OnWeaponFired.AddDynamic(this, &ACharacterBase::OnWeaponFired);
+}
+
+void ACharacterBase::DropWeapon()
+{
+	if(CurrentWeapon != nullptr)
+	{
+		// Unsubscribe from weapon's events.
+		CurrentWeapon->OnWeaponFired.RemoveDynamic(this, &ACharacterBase::OnWeaponFired);
+
+		// Detach weapon from the character.
+		CurrentWeapon->Detach();
+		CurrentWeapon = nullptr;
+
+		// Reset weapon states states.
+		bIsFiring = false;
+		bIsAiming = false;
 	}
 }
 
@@ -243,7 +262,7 @@ void ACharacterBase::OnDeath()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Drop held weapon.
-	Interact(nullptr);
+	DropWeapon();
 
 	// Disable character's capsule collision.
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
