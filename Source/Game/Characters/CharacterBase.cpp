@@ -183,7 +183,7 @@ void ACharacterBase::Aim(bool Toggle)
 	bIsAiming = Toggle;
 }
 
-void ACharacterBase::PickUp(AItemBase* Item)
+void ACharacterBase::Interact(AActor* Actor)
 {
 	// Drop the current weapon.
 	if(CurrentWeapon != nullptr)
@@ -196,7 +196,9 @@ void ACharacterBase::PickUp(AItemBase* Item)
 		CurrentWeapon = nullptr;
 	}
 
-	// Return if null character has been passed.
+	// Check if the actor is an item.
+	AItemBase* Item = Cast<AItemBase>(Actor);
+
 	if(Item == nullptr)
 		return;
 
@@ -241,7 +243,7 @@ void ACharacterBase::OnDeath()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Drop held weapon.
-	PickUp(nullptr);
+	Interact(nullptr);
 
 	// Disable character's capsule collision.
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

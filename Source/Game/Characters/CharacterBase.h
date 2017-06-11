@@ -31,7 +31,7 @@ public:
 	void Fire(bool Toggle);
 	void Aim(bool Toggle);
 
-	void PickUp(class AItemBase* Item);
+	void Interact(AActor* Actor);
 
 	class USkeletalMeshComponent* GetSkeletalMesh();
 

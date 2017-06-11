@@ -23,7 +23,7 @@ void APlayerControllerDefault::SetupInputComponent()
 	InputComponent->BindAction("Aim", IE_Pressed, this, &APlayerControllerDefault::AimPressed);
 	InputComponent->BindAction("Aim", IE_Released, this, &APlayerControllerDefault::AimReleased);
 
-	InputComponent->BindAction("PickUp", IE_Pressed, this, &APlayerControllerDefault::PickUpPressed);
+	InputComponent->BindAction("Interact", IE_Pressed, this, &APlayerControllerDefault::InteractPressed);
 }
 
 void APlayerControllerDefault::AcknowledgePossession(APawn* PossesedPawn)
@@ -87,21 +87,16 @@ void APlayerControllerDefault::AimReleased()
 	Character->Aim(false);
 }
 
-void APlayerControllerDefault::PickUpPressed()
+void APlayerControllerDefault::InteractPressed()
 {
 	if(!Character)
 		return;
 
-	// Run a trace to get an actor below the cursor.
+	// Interact with the actor under the cursor.
 	FHitResult TraceResult;
+
 	if(GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, TraceResult))
 	{
-		// Check if the traced actor is an item.
-		AItemBase* Item = Cast<AItemBase>(TraceResult.GetActor());
-
-		if(Item != nullptr)
-		{
-			Character->PickUp(Item);
-		}
+		Character->Interact(TraceResult.GetActor());
 	}
 }

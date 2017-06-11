@@ -26,7 +26,7 @@ private:
 	void AimPressed();
 	void AimReleased();
 
-	void PickUpPressed();
+	void InteractPressed();
 
 private:
 	class ACharacterBase* Character;
