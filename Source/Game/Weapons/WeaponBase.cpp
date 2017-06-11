@@ -16,6 +16,9 @@ AWeaponBase::AWeaponBase() :
 
 	// Set default variables.
 	FireRate = 10.0f;
+
+	MaximumAmmo = 30;
+	CurrentAmmo = -1;
 }
 
 void AWeaponBase::PostInitializeComponents()
@@ -38,6 +41,16 @@ void AWeaponBase::PostInitializeComponents()
 	}
 
 	check(Muzzle != nullptr && "Actor is mising an arrow component for muzzle!");
+
+	// Sanitize default values.
+	MaximumAmmo = FMath::Max(1, MaximumAmmo);
+	CurrentAmmo = FMath::Min(CurrentAmmo, MaximumAmmo);
+
+	// Set current ammo to maximum ammo.
+	if(CurrentAmmo < 0)
+	{
+		CurrentAmmo = MaximumAmmo;
+	}
 }
 
 void AWeaponBase::BeginPlay()
@@ -85,9 +98,13 @@ void AWeaponBase::PullTrigger()
 {
 	auto& TimerManager = GetWorld()->GetTimerManager();
 
-	// Start the firing timer and use the remaining time of the previous timer.
-	float RemainingTime = FMath::Max(TimerManager.GetTimerRemaining(FireTimer), 0.0f);
-	TimerManager.SetTimer(FireTimer, this, &AWeaponBase::Fire, 1.0f / FireRate, true, RemainingTime);
+	// Check current ammo value before attempting to firing.
+	if(CurrentAmmo > 0)
+	{
+		// Start the firing timer and use the remaining time of the previous timer.
+		float RemainingTime = FMath::Max(TimerManager.GetTimerRemaining(FireTimer), 0.0f);
+		TimerManager.SetTimer(FireTimer, this, &AWeaponBase::Fire, 1.0f / FireRate, true, RemainingTime);
+	}
 }
 
 void AWeaponBase::ReleaseTrigger()
@@ -104,15 +121,22 @@ void AWeaponBase::ReleaseTrigger()
 
 void AWeaponBase::Fire()
 {
-	// Spawn a projectile.
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Instigator = Cast<APawn>(GetOwner());
+	// Check current ammo value before actually firing.
+	if(CurrentAmmo > 0)
+	{
+		// Spawn a projectile.
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Instigator = Cast<APawn>(GetOwner());
 
-	FTransform Transform = Muzzle->GetComponentToWorld();
-	GetWorld()->SpawnActor<AActor>(ProjectileType, Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParams);
+		FTransform Transform = Muzzle->GetComponentToWorld();
+		GetWorld()->SpawnActor<AActor>(ProjectileType, Transform.GetLocation(), Transform.GetRotation().Rotator(), SpawnParams);
 
-	// Broadcast a weapon fired event.
-	OnWeaponFired.Broadcast();
+		// Broadcast a weapon fired event.
+		OnWeaponFired.Broadcast();
+
+		// Decrement the ammo count.
+		CurrentAmmo -= 1;
+	}
 }
 
 void AWeaponBase::ClearFireTimer()

@@ -18,6 +18,12 @@ public:
 	float FireRate;
 
 	UPROPERTY(EditDefaultsOnly)
+	int MaximumAmmo;
+
+	UPROPERTY(EditDefaultsOnly)
+	int CurrentAmmo;
+
+	UPROPERTY(EditDefaultsOnly)
 	class UClass* ProjectileType;
 
 	UPROPERTY(BlueprintAssignable)
