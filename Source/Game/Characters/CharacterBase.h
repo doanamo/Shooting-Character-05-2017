@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FireAimAnimation;
 
+	UFUNCTION(BlueprintPure)
+	class AWeaponBase* GetCurrentWeapon();
+
 public:
 	void Move(FVector Direction, float Scale);
 	void Fire(bool Toggle);

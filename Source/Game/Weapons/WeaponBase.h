@@ -17,10 +17,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float FireRate;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int MaximumAmmo;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int CurrentAmmo;
 
 	UPROPERTY(EditDefaultsOnly)

@@ -279,6 +279,11 @@ void ACharacterBase::OnDeath()
 	SkeletalMesh->SetSimulatePhysics(true);
 }
 
+AWeaponBase* ACharacterBase::GetCurrentWeapon()
+{
+	return CurrentWeapon;
+}
+
 class USkeletalMeshComponent* ACharacterBase::GetSkeletalMesh()
 {
 	return SkeletalMesh;
