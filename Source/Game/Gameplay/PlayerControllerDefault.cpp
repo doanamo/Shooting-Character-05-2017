@@ -92,11 +92,11 @@ void APlayerControllerDefault::InteractPressed()
 	if(!Character)
 		return;
 
-	// Interact with the actor under the cursor.
+	// Get the actor under the cursor.
 	FHitResult TraceResult;
+	GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, TraceResult);
 
-	if(GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_WorldDynamic), false, TraceResult))
-	{
-		Character->Interact(TraceResult.GetActor());
-	}
+	// Interact with the actor under the cursor.
+	// We are fine with getting nullptr as the actor.
+	Character->Interact(TraceResult.GetActor());
 }
