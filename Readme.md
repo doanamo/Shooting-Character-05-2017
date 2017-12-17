@@ -1,8 +1,8 @@
-Shooting Character (in Unreal Engine)
+Shooting Character (in Unreal Engine 4)
 ====
-Top-down character locomotion and animation demo with some gameplay elements implemented such as aiming, shooting and items. Rewritten version of Unity project with the same name that can be found [here](https://github.com/gunstarpl/Shooting-Character-02-2017). First time experience working with Unreal Engine, which I found much more enjoyable to work with than with Unity.
+Top-down character locomotion and animation demo with some gameplay elements implemented such as aiming, shooting and items. Rewritten version of Unity project with the same name that can be found [here](https://github.com/gunstarpl/Shooting-Character-02-2017). First time experience working with Unreal Engine 4, which I found much more enjoyable to work with than with Unity 5.
 
-Click [here](https://www.youtube.com/embed/Qzwh0MgRDpc?rel=0&amp;showinfo=0) or on the screenshot below to watch a video.
+Click [here](https://www.youtube.com/embed/Qzwh0MgRDpc?rel=0&amp;showinfo=0) or on screenshot below to watch the demo video.
 
 [![](Documentation/Screenshot.jpg)](https://www.youtube.com/embed/Qzwh0MgRDpc?rel=0&amp;showinfo=0)
 
